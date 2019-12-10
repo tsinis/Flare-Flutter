@@ -110,7 +110,9 @@ abstract class FlutterFill {
   void onPaintUpdated(ui.Paint paint) {}
 
   void initializeGraphics() {
-    _paint = ui.Paint()..style = PaintingStyle.fill;
+    _paint = ui.Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = false;
     onPaintUpdated(_paint);
   }
 
@@ -140,7 +142,8 @@ abstract class FlutterStroke {
       ..style = ui.PaintingStyle.stroke
       ..strokeWidth = stroke.width
       ..strokeCap = FlutterStroke.getStrokeCap(stroke.cap)
-      ..strokeJoin = FlutterStroke.getStrokeJoin(stroke.join);
+      ..strokeJoin = FlutterStroke.getStrokeJoin(stroke.join)
+      ..isAntiAlias = false;
     onPaintUpdated(_paint);
   }
 
@@ -1066,7 +1069,7 @@ class FlutterActorImage extends ActorImage with FlutterActorDrawable {
                 ui.TileMode.clamp, _identityMatrix)
             : null
         ..filterQuality = ui.FilterQuality.low
-        ..isAntiAlias = true;
+        ..isAntiAlias = false;
       onPaintUpdated(_paint);
     }
   }
@@ -1189,7 +1192,7 @@ class FlutterActorImage extends ActorImage with FlutterActorDrawable {
               image, ui.TileMode.clamp, ui.TileMode.clamp, _identityMatrix)
           : null;
     _paint.filterQuality = ui.FilterQuality.low;
-    _paint.isAntiAlias = true;
+    _paint.isAntiAlias = false;
     onPaintUpdated(_paint);
   }
 
@@ -1322,7 +1325,7 @@ class FlutterActorLayerEffectRenderer extends ActorLayerEffectRenderer
 
     double baseBlurX = 0;
     double baseBlurY = 0;
-    Paint layerPaint = Paint();
+    Paint layerPaint = Paint()..isAntiAlias = false;
     Color layerColor = Colors.white.withOpacity(parent.renderOpacity);
     layerPaint.color = layerColor;
     if (blur?.isActive ?? false) {
@@ -1343,6 +1346,7 @@ class FlutterActorLayerEffectRenderer extends ActorLayerEffectRenderer
         var color = dropShadow.color;
         canvas.translate(dropShadow.offsetX, dropShadow.offsetY);
         var shadowPaint = Paint()
+          ..isAntiAlias = false
           ..color = layerColor
           ..imageFilter = _blurFilter(
               dropShadow.blurX + baseBlurX, dropShadow.blurY + baseBlurY)
@@ -1375,7 +1379,9 @@ class FlutterActorLayerEffectRenderer extends ActorLayerEffectRenderer
           // to then draw the shadow on top of with srcIn to only show the
           // shadow and finally composite with the desired blend mode requested
           // here.
-          var extraLayerPaint = Paint()..blendMode = blendMode;
+          var extraLayerPaint = Paint()
+            ..isAntiAlias
+            ..blendMode = blendMode;
           drawPass(canvas, bounds, extraLayerPaint);
         }
 
@@ -1385,6 +1391,7 @@ class FlutterActorLayerEffectRenderer extends ActorLayerEffectRenderer
 
         var color = innerShadow.color;
         var shadowPaint = Paint()
+          ..isAntiAlias = false
           ..color = layerColor
           ..blendMode =
               extraBlendPass ? ui.BlendMode.srcIn : ui.BlendMode.srcATop
@@ -1403,6 +1410,7 @@ class FlutterActorLayerEffectRenderer extends ActorLayerEffectRenderer
 
         // Invert the alpha to compute inner part.
         var invertPaint = Paint()
+          ..isAntiAlias = false
           ..colorFilter = const ui.ColorFilter.matrix([
             1,
             0,
@@ -1455,7 +1463,7 @@ class FlutterActorLayerEffectRenderer extends ActorLayerEffectRenderer
         continue;
       }
 
-      var maskPaint = Paint();
+      var maskPaint = Paint()..isAntiAlias = false;
       switch (mask.maskType) {
         case MaskType.invertedAlpha:
           maskPaint.colorFilter = const ui.ColorFilter.matrix(
